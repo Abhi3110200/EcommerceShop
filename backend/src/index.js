@@ -3,14 +3,16 @@ import path from "path";
 import cors from "cors";
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
-import { clerkMiddleware } from "@clerk/express";
+import authRoutes from './routes/auth.route.js'
 
 const app = express();
 
 app.use(express.json());
-app.use(clerkMiddleware());
+app.use(cors());
 
 const __dirname = path.resolve();
+
+app.use("/api/auth", authRoutes);
 
  
 const PORT = ENV.PORT;
@@ -23,8 +25,11 @@ if(ENV.NODE_ENV === "production"){
     });
 }
 
-app.listen(PORT, () => {
-    connectDB();
-    console.log(`Server is running on port ${PORT} in ${ENV.NODE_ENV} mode`);
-});
+const startServer = async ()=>{
+    await connectDB();
+    app.listen(ENV.PORT, ()=>{
+        console.log('Server is up and running');
+    })
+}
 
+startServer();
