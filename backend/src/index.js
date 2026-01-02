@@ -2,11 +2,13 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 import { ENV } from "./config/env.js";
+import { connectDB } from "./config/db.js";
+import { clerkMiddleware } from "@clerk/express";
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(clerkMiddleware());
 
 const __dirname = path.resolve();
 
@@ -22,6 +24,7 @@ if(ENV.NODE_ENV === "production"){
 }
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    connectDB();
+    console.log(`Server is running on port ${PORT} in ${ENV.NODE_ENV} mode`);
 });
 
